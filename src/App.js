@@ -1,11 +1,13 @@
 import Wizard from './components/wizard';
 import { useState, useEffect } from 'react';
+import { io } from "socket.io-client";
 
 function App() {
   const [x, setX] = useState(100);
   const [y, setY] = useState(100);
   const [currentSpeed, setCurrentSpeed] = useState(40);
   const [keyState, setKeyState] = useState({});
+  let socket = undefined;
 
   useEffect(() => {
     document.addEventListener("keydown",(e) => {  // simple but powerful
@@ -13,6 +15,10 @@ function App() {
       newKeyState[e.code] = e.type === "keydown";
       setKeyState(newKeyState);
     });
+  }, []);
+
+  useEffect(() => {
+    socket = io("http://localhost:3030");
   }, []);
   
   useEffect(() => {
