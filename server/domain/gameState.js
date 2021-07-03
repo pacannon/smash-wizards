@@ -1,6 +1,6 @@
 const player = require('./player').player;
 
-function gameState() {
+function createGameState() {
   return {
     players: [],
   };
@@ -12,4 +12,4 @@ function addPlayer(gameState, id) {
   return { ...gameState, players: [ ...gameState.players, newPlayer ] };
 }
 
-module.exports = { gameState, addPlayer };
+module.exports = { createGameState, addPlayer };
