@@ -1,4 +1,4 @@
-let { createGameState, addPlayer } = require('./domain/gameState');
+let { GameState } = require('./domain/gameState');
 
 const server = require('http').createServer();
 const io = require('socket.io')(server, {
@@ -8,12 +8,21 @@ const io = require('socket.io')(server, {
   }
 });
 
-let gameState = createGameState();
+let gameState = new GameState();
+
 
 io.on('connection', client => {
-  gameState = addPlayer(gameState, client.id)
+  gameState.addPlayer(client.id);
   console.log(gameState)
-  client.on('event', data => { /* … */ });
-  client.on('disconnect', () => { /* … */ });
+  client.on('userCommand', userCommand => {
+    gameState.handleUserCommand(client.id, userCommand);
+   });
+  client.on('disconnect', () => { 
+    gameState.removePlayer(client.id)
+  });
 });
 server.listen(3030);
+
+setInterval(() => {
+  io.emit("gameState", gameState);
+}, 1000)
