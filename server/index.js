@@ -10,7 +10,6 @@ const io = require('socket.io')(server, {
 
 let gameState = new GameState();
 
-
 io.on('connection', client => {
   gameState.addPlayer(client.id);
   console.log(gameState)
@@ -21,8 +20,10 @@ io.on('connection', client => {
     gameState.removePlayer(client.id)
   });
 });
+
 server.listen(3030);
 
 setInterval(() => {
+  gameState.update();
   io.emit("gameState", gameState);
-}, 1000)
+}, 17)

@@ -5,6 +5,12 @@ class GameState {
     this.players = [];
   }
 
+  update() {
+    Object.keys(this.players).forEach((key) => {
+      this.players[key].update()
+    })
+  }
+
   addPlayer(id) {
     const player = new Player(id);
 
