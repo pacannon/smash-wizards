@@ -1,18 +1,18 @@
+const { GameObject } = require("./gameObject");
 
 
 const gravity = 8;
-class Player {
+class Player extends GameObject {
   constructor(id) {
+    super({ id: id, x: 400, y: 400, width: 100, height: 100});
     this.id = id; // Player ID
     //Velocity Information
 
     this.topSpeed = 40;  //Top Velocity
-    this.horizontalSpeed = 0; // Horizontal Velocity
-    this.verticalSpeed = 0; // Vertical Velocity
+    this.vx = 0; // Horizontal Velocity
+    this.vy = 0; // Vertical Velocity
     this.direction = "right"; // Direction Facing
     this.facingDirection = "right";
-    this.x = 400; // Current Position -- X
-    this.y = 400; // Current Position -- Y
     this.isTouchingSurface = true; // Is in contact with surface
   }
 
@@ -21,24 +21,15 @@ class Player {
     if (!this.isTouchingSurface) {
       this.y += gravity
     }
-    if (this.horizontalSpeed > 0) {
-      if (this.direction == 'right') {
-        this.x = this.x + this.horizontalSpeed;
-      } else {
-        this.x = this.x - this.horizontalSpeed;
-      }
-      this.horizontalSpeed -= .2
-    }
+    this.x = this.x + this.vx;
+    this.vx *= .9
   }
 
   move(direction) {
-    this.facingDirection = direction
-      if (this.horizontalSpeed < this.topSpeed && this.facingDirection == this.direction) {
-        this.horizontalSpeed += 2;
-      }
-      if ( this.horizontalSpeed <= 0) {
-        this.direction = direction
-      }
+    this.facingDirection = direction;
+    if (Math.abs(this.vx) < this.topSpeed) {
+      this.vx += direction === "right" ? 2 : -2;
+    }
   }
 
   jump() {

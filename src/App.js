@@ -1,6 +1,7 @@
 import Wizard from './components/wizard';
 import { useState, useEffect } from 'react';
 import { io } from "socket.io-client";
+import GameObject from './components/GameObject';
 
 let socket = io("http://localhost:3030");
 
@@ -27,6 +28,9 @@ function App() {
     <div className="App">
       {gameState && Object.keys(gameState.players).map(playerId => {
         return <Wizard player={gameState.players[playerId]}/>
+      })}
+      {gameState && gameState.gameObjects.map(gameObject => {
+        return <GameObject gameObject={gameObject}/>
       })}
     </div>
   );
