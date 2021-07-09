@@ -1,9 +1,11 @@
+const { Shot } = require("./shot");
+const { Swipe } = require("./swipe");
 const { Player } = require("./player");
 
 class GameState {
   constructor() {
-    this.players = [];
-    this.gameObjects = [];
+    this.players = {};
+    this.gameObjects = {};
   }
 
   update() {
@@ -11,7 +13,14 @@ class GameState {
       const player = this.players[key];
       player.update();
 
-      this.gameObjects.forEach((gameObject) => {
+      Object.keys(this.gameObjects).forEach((key) => {
+        const gameObject = this.gameObjects[key];
+        const actions = gameObject.update();
+
+        actions.forEach((action) => {
+          action.execute(this);
+        });
+
         if (player.intersects(gameObject)) {
           const timeCollisionRightOfGameObject =
             (player.left - gameObject.right) / player.vx;
@@ -48,7 +57,11 @@ class GameState {
   }
 
   addGameObject(gameObject) {
-    this.gameObjects.push(gameObject);
+    this.gameObjects = { ...this.gameObjects, [gameObject.id]: gameObject };
+  }
+
+  removeGameObject(id) {
+    delete this.gameObjects[id];
   }
 
   addPlayer(id) {
@@ -63,7 +76,22 @@ class GameState {
 
   handleUserCommand(playerId, userCommand) {
     if (Object(this.players).hasOwnProperty(playerId)) {
-      this.players[playerId].handleUserCommand(userCommand);
+      const [actionRequired, action] =
+        this.players[playerId].handleUserCommand(userCommand);
+      if (actionRequired) {
+        const { name, x, y, direction } = action;
+        const id = Math.floor(Math.random() * 90000) + 10000;
+        switch (name) {
+          case "swipe":
+            this.addGameObject(new Swipe(id, x, y, direction));
+            break;
+          case "shoot":
+            this.addGameObject(new Shot(id, x, y, direction));
+            break;
+          default:
+            break;
+        }
+      }
     }
   }
 }

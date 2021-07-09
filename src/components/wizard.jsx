@@ -9,8 +9,8 @@ const Wizard = ({ player }) => {
 
   const style = {
     position: "absolute",
-    left: x - (width / 2),
-    bottom: y + (height / 2),
+    left: x - width / 2,
+    bottom: y + height / 2,
     width: width,
     height: height,
     backgroundColor: "green",

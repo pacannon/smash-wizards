@@ -1,12 +1,12 @@
-const { GameObject } = require('./domain/gameObject');
-let { GameState } = require('./domain/gameState');
+const { GameObject } = require("./domain/gameObject");
+let { GameState } = require("./domain/gameState");
 
-const server = require('http').createServer();
-const io = require('socket.io')(server, {
+const server = require("http").createServer();
+const io = require("socket.io")(server, {
   cors: {
     origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+  },
 });
 
 let gameState = new GameState();
@@ -17,14 +17,16 @@ gameState.addGameObject(gameObject1);
 gameState.addGameObject(gameObject2);
 gameState.addGameObject(gameObject3);
 
-io.on('connection', client => {
+// gameState.addGameObject(gameObject1);
+// gameState.addGameObject(gameObject2);
+
+io.on("connection", (client) => {
   gameState.addPlayer(client.id);
-  console.log(gameState)
-  client.on('userCommand', userCommand => {
+  client.on("userCommand", (userCommand) => {
     gameState.handleUserCommand(client.id, userCommand);
-   });
-  client.on('disconnect', () => { 
-    gameState.removePlayer(client.id)
+  });
+  client.on("disconnect", () => {
+    gameState.removePlayer(client.id);
   });
 });
 
@@ -33,4 +35,4 @@ server.listen(3030);
 setInterval(() => {
   gameState.update();
   io.emit("gameState", gameState);
-}, 17)
+}, 17);

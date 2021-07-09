@@ -1,11 +1,12 @@
 class GameObject {
-  constructor({ id, x = 0, y = 0, width = 1, height = 1}) {
+  constructor({ id, x = 0, y = 0, width = 1, height = 1, color = "brown" }) {
     this.id = id;
 
     this.x = x;
     this.y = y;
     this.width = width;
-    this.height= height;
+    this.height = height;
+    this.color = color;
   }
 
   get left() {
@@ -48,6 +49,8 @@ class GameObject {
 
     return !( aLeftOfB || aRightOfB || aAboveB || aBelowB );
   }
+
+  update() {}
 }
 
 module.exports = { GameObject };

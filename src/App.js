@@ -1,37 +1,40 @@
-import Wizard from './components/wizard';
-import { useState, useEffect } from 'react';
+import Wizard from "./components/wizard";
+import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
-import GameObject from './components/GameObject';
+import GameObject from "./components/GameObject";
 
 let socket = io("http://localhost:3030");
 
 function App() {
   const [gameState, setGameState] = useState(undefined);
 
-
   useEffect(() => {
-    document.addEventListener("keydown",(e) => {  // simple but powerful
+    document.addEventListener("keydown", (e) => {
+      // simple but powerful
       let newKeyState = {};
       newKeyState[e.code] = e.type === "keydown";
-      socket.emit('userCommand', newKeyState)
+      socket.emit("userCommand", newKeyState);
     });
   }, []);
 
-    useEffect(() => {
-      socket.connect()
-      socket.on('gameState', gameState => {
-        setGameState(gameState);
-      })
-    }, []);
+  useEffect(() => {
+    socket.connect();
+    socket.on("gameState", (gameState) => {
+      setGameState(gameState);
+    });
+  }, []);
 
   return (
     <div className="App">
-      {gameState && Object.keys(gameState.players).map(playerId => {
-        return <Wizard player={gameState.players[playerId]}/>
-      })}
-      {gameState && gameState.gameObjects.map(gameObject => {
-        return <GameObject gameObject={gameObject}/>
-      })}
+      {gameState &&
+        Object.keys(gameState.players).map((playerId) => {
+          return <Wizard key={playerId} player={gameState.players[playerId]} />;
+        })}
+      {gameState &&
+        Object.keys(gameState.gameObjects).map((id) => {
+          let gameObject = gameState.gameObjects[id];
+          return <GameObject key={gameObject.id} gameObject={gameObject} />;
+        })}
     </div>
   );
 }
