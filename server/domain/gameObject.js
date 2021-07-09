@@ -28,12 +28,25 @@ class GameObject {
     return this.y + this.height / 2;
   }
 
+  set top(value) {
+    this.y = this.y + (value - this.top);
+  }
+
   get bottom() {
     return this.y - this.height / 2;
   }
 
   set bottom(value) {
-    this.y = this.y + this.bottom - value;
+    this.y = this.y + (value - this.bottom);
+  }
+
+  intersects(gameObject) {
+    const aLeftOfB = this.right < gameObject.left;
+    const aRightOfB = this.left > gameObject.right;
+    const aAboveB = this.bottom > gameObject.top;
+    const aBelowB = this.top < gameObject.bottom;
+
+    return !( aLeftOfB || aRightOfB || aAboveB || aBelowB );
   }
 }
 

@@ -1,4 +1,4 @@
-const { Player } = require('./player');
+const { Player } = require("./player");
 
 class GameState {
   constructor() {
@@ -9,22 +9,22 @@ class GameState {
   update() {
     Object.keys(this.players).forEach((key) => {
       const player = this.players[key];
-      player.update()
+      player.update();
 
-      this.gameObjects.forEach(gameObject => {
-        if(player.x < gameObject.x + gameObject.width &&
-        player.x + player.width > gameObject.x &&
-        player.y < gameObject.y + gameObject.height &&
-        player.y + player.height > gameObject.y) {
-    
+      this.gameObjects.forEach((gameObject) => {
+        if (player.intersects(gameObject)) {
           const timeCollisionRightOfGameObject =
             (player.left - gameObject.right) / player.vx;
           const timeCollisionLeftOfGameObject =
             (player.right - gameObject.left) / player.vx;
           const timeCollisionTopOfGameObject =
-            (gameObject.top - player.bottom) / player.vy;
+            (player.bottom - gameObject.top) / player.vy;
           const timeCollisionBottomOfGameObject =
-            (gameObject.bottom - player.top) / player.vy;
+            (player.top - gameObject.bottom) / player.vy;
+
+          console.log(
+            `right: ${timeCollisionRightOfGameObject}, left ${timeCollisionLeftOfGameObject}, top: ${timeCollisionTopOfGameObject}, bottom: ${timeCollisionBottomOfGameObject}`
+          );
 
           if (player.vx > 0 && timeCollisionLeftOfGameObject > 0) {
             player.vx = 0;
@@ -34,9 +34,17 @@ class GameState {
             player.vx = 0;
             player.left = gameObject.right;
           }
+          if (player.vy > 0 && timeCollisionBottomOfGameObject > 0) {
+            player.vy = 0;
+            player.top = gameObject.bottom;
+          }
+          if (player.vy < 0 && timeCollisionTopOfGameObject > 0) {
+            player.vy = 0;
+            player.bottom = gameObject.top;
+          }
         }
       });
-    })
+    });
   }
 
   addGameObject(gameObject) {

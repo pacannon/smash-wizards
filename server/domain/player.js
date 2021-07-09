@@ -1,7 +1,7 @@
 const { GameObject } = require("./gameObject");
 
 
-const gravity = 8;
+const gravity = -0.08;
 class Player extends GameObject {
   constructor(id) {
     super({ id: id, x: 400, y: 400, width: 100, height: 100});
@@ -18,9 +18,8 @@ class Player extends GameObject {
 
   // Update Function ran every gameloop
   update() {
-    if (!this.isTouchingSurface) {
-      this.y += gravity
-    }
+    this.vy += gravity
+    this.y = this.y + this.vy
     this.x = this.x + this.vx;
     this.vx *= .9
   }
@@ -55,7 +54,7 @@ class Player extends GameObject {
     } 
 
     if (Space && this.isTouchingSurface) {
-      this.y -= 200;
+      this.vy += 4;
       this.isTouchingSurface = false;
       setTimeout(() => {
         this.isTouchingSurface = true;
