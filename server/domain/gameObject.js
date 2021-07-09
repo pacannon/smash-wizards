@@ -50,7 +50,9 @@ class GameObject {
     return !( aLeftOfB || aRightOfB || aAboveB || aBelowB );
   }
 
-  update() {}
+  update() {
+    return [];
+  }
 }
 
 module.exports = { GameObject };

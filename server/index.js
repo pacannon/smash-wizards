@@ -12,7 +12,7 @@ const io = require("socket.io")(server, {
 let gameState = new GameState();
 const gameObject1 = new GameObject({ id: 1, x: 150, y: 450, width: 100, height: 100 });
 const gameObject2 = new GameObject({ id: 2, x: 550, y: 450, width: 100, height: 100 });
-const gameObject3 = new GameObject({ id: 2, x: 550, y: 50, width: 1000, height: 100 });
+const gameObject3 = new GameObject({ id: 3, x: 550, y: 50, width: 1000, height: 100 });
 gameState.addGameObject(gameObject1);
 gameState.addGameObject(gameObject2);
 gameState.addGameObject(gameObject3);
