@@ -31,7 +31,8 @@ function App() {
           return <Wizard key={playerId} player={gameState.players[playerId]} />;
         })}
       {gameState &&
-        gameState.gameObjects.map((gameObject) => {
+        Object.keys(gameState.gameObjects).map((id) => {
+          let gameObject = gameState.gameObjects[id];
           return <GameObject key={gameObject.id} gameObject={gameObject} />;
         })}
     </div>

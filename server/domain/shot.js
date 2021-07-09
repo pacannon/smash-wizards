@@ -1,4 +1,5 @@
 const { GameObject } = require("./gameObject");
+const { Remove } = require("./actions/remove");
 
 class Shot extends GameObject {
   constructor(id, x, y, direction) {
@@ -13,9 +14,9 @@ class Shot extends GameObject {
 
     const elapsed = Math.floor((Date.now() - this.createdAt) / 1000);
     if (elapsed >= 2) {
-      return [true, { name: "remove", id: this.id }];
+      return [new Remove(this.id)];
     }
-    return [false];
+    return [];
   }
 }
 

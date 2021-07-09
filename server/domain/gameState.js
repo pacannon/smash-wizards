@@ -4,8 +4,8 @@ const { Player } = require("./player");
 
 class GameState {
   constructor() {
-    this.players = [];
-    this.gameObjects = [];
+    this.players = {};
+    this.gameObjects = {};
   }
 
   update() {
@@ -13,20 +13,14 @@ class GameState {
       const player = this.players[key];
       player.update();
 
-      this.gameObjects.forEach((gameObject, index) => {
-        if (typeof gameObject.update === "function") {
-          const [actionRequired, action] = gameObject.update();
-          if (actionRequired) {
-            let { name, id } = action;
-            switch (name) {
-              case "remove":
-                this.removeGameObject(index);
-                break;
-              default:
-                break;
-            }
-          }
-        }
+      Object.keys(this.gameObjects).forEach((key) => {
+        const gameObject = this.gameObjects[key];
+        const actions = gameObject.update();
+
+        actions.forEach((action) => {
+          action.execute(this);
+        });
+
         if (
           player.x < gameObject.x + gameObject.width &&
           player.x + player.width > gameObject.x &&
@@ -56,11 +50,11 @@ class GameState {
   }
 
   addGameObject(gameObject) {
-    this.gameObjects.push(gameObject);
+    this.gameObjects = { ...this.gameObjects, [gameObject.id]: gameObject };
   }
 
-  removeGameObject(index) {
-    this.gameObjects.splice(index, 1);
+  removeGameObject(id) {
+    delete this.gameObjects[id];
   }
 
   addPlayer(id) {

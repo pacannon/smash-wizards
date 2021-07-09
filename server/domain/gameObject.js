@@ -36,6 +36,8 @@ class GameObject {
   set bottom(value) {
     this.y = this.y + this.bottom - value;
   }
+
+  update() {}
 }
 
 module.exports = { GameObject };

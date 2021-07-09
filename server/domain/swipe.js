@@ -1,5 +1,5 @@
 const { GameObject } = require("./gameObject");
-
+const { Remove } = require("./actions/remove");
 class Swipe extends GameObject {
   constructor(id, x, y, direction) {
     super({ id: id, x, y, width: 10, height: 10, color: "cyan" });
@@ -15,11 +15,10 @@ class Swipe extends GameObject {
     }
 
     const elapsed = Math.floor((Date.now() - this.createdAt) / 500);
-    console.log("Elapsed: ", elapsed);
     if (elapsed >= 0.5) {
-      return [true, { name: "remove", id: this.id }];
+      return [new Remove(this.id)];
     }
-    return [false];
+    return [];
   }
 }
 
