@@ -1,3 +1,5 @@
+const Matter = require('matter-js');
+
 class GameObject {
   constructor({ id, x = 0, y = 0, width = 1, height = 1, color = "brown" }) {
     this.id = id;
@@ -7,6 +9,8 @@ class GameObject {
     this.width = width;
     this.height = height;
     this.color = color;
+
+    this.body = Matter.Bodies.rectangle(this.x, this.y, this.width, this.height, { id: this.id, isStatic: true })
   }
 
   get left() {
@@ -52,6 +56,12 @@ class GameObject {
 
   update() {
     return [];
+  }
+
+  toClient() {
+    const { body, ...clientGameObject } = { ...this };
+
+    return clientGameObject;
   }
 }
 

@@ -1,14 +1,20 @@
+const Matter = require('matter-js');
+
 const { Shot } = require("./shot");
 const { Swipe } = require("./swipe");
 const { Player } = require("./player");
+const { GameObject } = require("./gameObject");
 
 class GameState {
   constructor() {
     this.players = {};
     this.gameObjects = {};
+    this.engine = Matter.Engine.create({ gravity: { x:0, y: -0.8}});
   }
 
   update() {
+    Matter.Engine.update(this.engine);
+
     Object.keys(this.players).forEach((key) => {
       const player = this.players[key];
       player.update();
@@ -20,57 +26,32 @@ class GameState {
         actions.forEach((action) => {
           action.execute(this);
         });
-
-        if (player.intersects(gameObject)) {
-          const timeCollisionRightOfGameObject =
-            (player.left - gameObject.right) / player.vx;
-          const timeCollisionLeftOfGameObject =
-            (player.right - gameObject.left) / player.vx;
-          const timeCollisionTopOfGameObject =
-            (player.bottom - gameObject.top) / player.vy;
-          const timeCollisionBottomOfGameObject =
-            (player.top - gameObject.bottom) / player.vy;
-
-          console.log(
-            `right: ${timeCollisionRightOfGameObject}, left ${timeCollisionLeftOfGameObject}, top: ${timeCollisionTopOfGameObject}, bottom: ${timeCollisionBottomOfGameObject}`
-          );
-
-          if (player.vx > 0 && timeCollisionLeftOfGameObject > 0) {
-            player.vx = 0;
-            player.right = gameObject.left;
-          }
-          if (player.vx < 0 && timeCollisionRightOfGameObject > 0) {
-            player.vx = 0;
-            player.left = gameObject.right;
-          }
-          if (player.vy > 0 && timeCollisionBottomOfGameObject > 0) {
-            player.vy = 0;
-            player.top = gameObject.bottom;
-          }
-          if (player.vy < 0 && timeCollisionTopOfGameObject > 0) {
-            player.vy = 0;
-            player.bottom = gameObject.top;
-          }
-        }
       });
     });
   }
 
+  /**
+   * @param {GameObject} gameObject 
+   */
   addGameObject(gameObject) {
+    Matter.Composite.add(this.engine.world, gameObject.body);
     this.gameObjects = { ...this.gameObjects, [gameObject.id]: gameObject };
   }
 
   removeGameObject(id) {
+    Matter.Composite.remove(this.engine.world, this.gameObjects[id].body);
     delete this.gameObjects[id];
   }
 
   addPlayer(id) {
     const player = new Player(id);
+    Matter.Composite.add(this.engine.world, player.body);
 
     this.players = { ...this.players, [id]: player };
   }
 
   removePlayer(id) {
+    Matter.Composite.remove(this.engine.world, this.players[id].body);
     delete this.players[id];
   }
 
@@ -93,6 +74,15 @@ class GameState {
         }
       }
     }
+  }
+
+  toClient() {
+    const { engine, players, gameObjects } = this;
+
+    let clientPlayers = Object.fromEntries(Object.entries(players).map(([playerId, player]) => [playerId, player.toClient()]));
+    let clientGameObjects = Object.fromEntries(Object.entries(gameObjects).map(([gameObjectId, gameObject]) => [gameObjectId, gameObject.toClient()]));
+
+    return { players: clientPlayers, gameObjects: clientGameObjects };
   }
 }
 

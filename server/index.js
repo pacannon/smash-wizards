@@ -34,5 +34,5 @@ server.listen(3030);
 
 setInterval(() => {
   gameState.update();
-  io.emit("gameState", gameState);
+  io.emit("gameState", gameState.toClient());
 }, 17);

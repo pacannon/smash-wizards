@@ -1,33 +1,36 @@
+const Matter = require('matter-js');
+
 const { GameObject } = require("./gameObject");
 
-
-const gravity = -0.08;
 class Player extends GameObject {
   constructor(id) {
     super({ id: id, x: 400, y: 400, width: 100, height: 100 });
     this.id = id; // Player ID
     //Velocity Information
 
-    this.topSpeed = 40; //Top Velocity
+    this.topSpeed = 3; //Top Velocity
     this.vx = 0; // Horizontal Velocity
     this.vy = 0; // Vertical Velocity
     this.direction = "right"; // Direction Facing
     this.facingDirection = "right";
     this.isTouchingSurface = true; // Is in contact with surface
+
+    Matter.Body.setStatic(this.body, false);
+    Matter.Body.setInertia(this.body, Number.POSITIVE_INFINITY);
   }
 
   // Update Function ran every gameloop
   update() {
-    this.vy += gravity
-    this.y = this.y + this.vy
-    this.x = this.x + this.vx;
-    this.vx *= 0.9;
+    this.x = this.body.position.x;
+    this.y = this.body.position.y
+    this.vx = this.body.velocity.x;
+    this.vy = this.body.velocity.y
   }
 
   move(direction) {
     this.facingDirection = direction;
     if (Math.abs(this.vx) < this.topSpeed) {
-      this.vx += direction === "right" ? 2 : -2;
+      Matter.Body.applyForce(this.body, Matter.Vector.create(this.body.position.x, this.body.position.y), Matter.Vector.create(direction === "right" ? 0.1 : -0.1, 0))
     }
   }
 
@@ -98,7 +101,7 @@ class Player extends GameObject {
     }
 
     if ((KeyW || Space) && this.isTouchingSurface) {
-      this.vy += 4;
+      this.body.force = { x: 0, y: 0.4 }
       this.isTouchingSurface = false;
       setTimeout(() => {
         this.isTouchingSurface = true;
