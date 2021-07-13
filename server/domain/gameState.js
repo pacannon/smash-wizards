@@ -1,4 +1,5 @@
 const Matter = require('matter-js');
+const cuid = require('cuid');
 
 const { Shot } = require("./shot");
 const { Swipe } = require("./swipe");
@@ -61,7 +62,7 @@ class GameState {
         this.players[playerId].handleUserCommand(userCommand);
       if (actionRequired) {
         const { name, x, y, direction } = action;
-        const id = Math.floor(Math.random() * 90000) + 10000;
+        const id = cuid();
         switch (name) {
           case "swipe":
             this.addGameObject(new Swipe(id, x, y, direction));
