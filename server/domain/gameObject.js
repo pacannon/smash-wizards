@@ -10,7 +10,7 @@ class GameObject {
     this.height = height;
     this.color = color;
 
-    this.body = Matter.Bodies.rectangle(this.x, this.y, this.width, this.height, { id: this.id, isStatic: true })
+    this.body = Matter.Bodies.rectangle(this.x, this.y, this.width, this.height, { id: this.id, isStatic: true, friction: 0, frictionStatic: 0, frictionAir: 0.01 })
   }
 
   get left() {
