@@ -7,6 +7,8 @@ class Shot extends GameObject {
     this.direction = direction;
     this.createdAt = Date.now();
     this.speed = 5;
+
+    this.body.isSensor = true;
   }
 
   update() {
