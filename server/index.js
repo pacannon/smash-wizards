@@ -9,30 +9,63 @@ const io = require("socket.io")(server, {
   },
 });
 
-let gameState = new GameState();
-const gameObject1 = new GameObject({ id: 1, x: 150, y: 450, width: 100, height: 100 });
-const gameObject2 = new GameObject({ id: 2, x: 550, y: 450, width: 100, height: 100 });
-const gameObject3 = new GameObject({ id: 3, x: 550, y: 50, width: 1000, height: 100 });
-gameState.addGameObject(gameObject1);
-gameState.addGameObject(gameObject2);
-gameState.addGameObject(gameObject3);
+let gameStates = {};
 
-// gameState.addGameObject(gameObject1);
-// gameState.addGameObject(gameObject2);
+const generateRoom = () => {
+  let gameState = new GameState();
+  const gameObject1 = new GameObject({
+    id: 1,
+    x: 150,
+    y: 450,
+    width: 100,
+    height: 100,
+  });
+  const gameObject2 = new GameObject({
+    id: 2,
+    x: 550,
+    y: 450,
+    width: 100,
+    height: 100,
+  });
+  const gameObject3 = new GameObject({
+    id: 3,
+    x: 550,
+    y: 50,
+    width: 1000,
+    height: 100,
+  });
+  gameState.addGameObject(gameObject1);
+  gameState.addGameObject(gameObject2);
+  gameState.addGameObject(gameObject3);
+  return gameState;
+};
 
 io.on("connection", (client) => {
-  gameState.addPlayer(client.id);
+  let roomId = "";
+  client.on("join", ({ id }) => {
+    roomId = `room-${id}`;
+
+    if (gameStates[roomId] === undefined) {
+      gameStates[roomId] = generateRoom();
+    }
+
+    client.join(`room-${id}`);
+    gameStates[roomId].addPlayer(client.id);
+    client.emit("joined");
+  });
   client.on("userCommand", (userCommand) => {
-    gameState.handleUserCommand(client.id, userCommand);
+    gameStates[roomId].handleUserCommand(client.id, userCommand);
   });
   client.on("disconnect", () => {
-    gameState.removePlayer(client.id);
+    gameStates[roomId].removePlayer(client.id);
   });
 });
 
 server.listen(3030);
 
 setInterval(() => {
-  gameState.update();
-  io.emit("gameState", gameState.toClient());
+  Object.keys(gameStates).forEach((roomId) => {
+    gameStates[roomId].update();
+    io.to(roomId).emit("gameState", gameStates[roomId].toClient());
+  });
 }, 17);
