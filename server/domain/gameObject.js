@@ -1,7 +1,7 @@
 const Matter = require('matter-js');
 
 class GameObject {
-  constructor({ id, x = 0, y = 0, width = 1, height = 1, color = "brown" }) {
+  constructor({ id, x = 0, y = 0, width = 1, height = 1, color = "brown", angle = 0 }) {
     this.id = id;
 
     this.x = x;
@@ -9,8 +9,9 @@ class GameObject {
     this.width = width;
     this.height = height;
     this.color = color;
+    this.angle = angle;
 
-    this.body = Matter.Bodies.rectangle(this.x, this.y, this.width, this.height, { id: this.id, isStatic: true, friction: 0, frictionStatic: 0, frictionAir: 0.01 })
+    this.body = Matter.Bodies.rectangle(this.x, this.y, this.width, this.height, { id: this.id, isStatic: true, friction: 0, frictionStatic: 0, frictionAir: 0.01, angle: angle })
   }
 
   get left() {

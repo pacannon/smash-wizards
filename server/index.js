@@ -34,9 +34,26 @@ const generateRoom = () => {
     width: 1000,
     height: 100,
   });
+  const gameObject4 = new GameObject({
+    id: 4,
+    x: 950,
+    y: 240,
+    width: 400,
+    height: 15,
+    angle: (2*Math.PI)*(15/360)
+  });
+  const gameObject5 = new GameObject({
+    id: 5,
+    x: 1350,
+    y: 450,
+    width: 100,
+    height: 100,
+  });
   gameState.addGameObject(gameObject1);
   gameState.addGameObject(gameObject2);
   gameState.addGameObject(gameObject3);
+  gameState.addGameObject(gameObject4);
+  gameState.addGameObject(gameObject5);
   return gameState;
 };
 

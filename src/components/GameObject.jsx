@@ -15,7 +15,9 @@ const GameObject = ({ gameObject }) => {
     width: width,
     height: height,
     backgroundColor: color,
+    transform: `rotate(${-360*gameObject.angle/(2*Math.PI)}deg)`,
   };
+
   return <div id={id} style={style}></div>;
 };
 
