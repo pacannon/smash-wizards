@@ -3,6 +3,7 @@ import JoinScreen from "./components/JoinScreen";
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import GameObject from "./components/GameObject";
+import PlayersDisplay from "./components/PlayersDisplay";
 
 let socket = io("http://localhost:3030");
 
@@ -40,6 +41,13 @@ function App() {
         <JoinScreen join={joinRoom} />
       ) : (
         <>
+          {gameState && (
+            <PlayersDisplay
+              players={Object.keys(gameState.players).map(
+                (playerId) => gameState.players[playerId]
+              )}
+            />
+          )}
           {gameState &&
             Object.keys(gameState.players).map((playerId) => {
               return (

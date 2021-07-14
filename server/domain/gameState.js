@@ -1,5 +1,5 @@
-const Matter = require('matter-js');
-const cuid = require('cuid');
+const Matter = require("matter-js");
+const cuid = require("cuid");
 
 const { Shot } = require("./shot");
 const { Swipe } = require("./swipe");
@@ -10,7 +10,27 @@ class GameState {
   constructor() {
     this.players = {};
     this.gameObjects = {};
-    this.engine = Matter.Engine.create({ gravity: { x:0, y: -0.8}});
+    this.engine = Matter.Engine.create({ gravity: { x: 0, y: -0.8 } });
+    Matter.Events.on(this.engine, "collisionStart", (e) => {
+      const joinedArray = [
+        ...Object.keys(this.players).map((prop) => this.players[prop]),
+        ...Object.keys(this.gameObjects).map((prop) => this.gameObjects[prop]),
+      ];
+
+      const collisions = e.pairs
+        .map((collision) => [collision.bodyA.id, collision.bodyB.id])
+        .flat();
+
+      let affectedEntities = joinedArray.filter(({ id }) =>
+        collisions.includes(id)
+      );
+
+      affectedEntities.forEach((entity) => {
+        let actions = entity.collide();
+        console.log(actions);
+        actions.forEach((action) => action.execute(this));
+      });
+    });
   }
 
   update() {
@@ -32,7 +52,7 @@ class GameState {
   }
 
   /**
-   * @param {GameObject} gameObject 
+   * @param {GameObject} gameObject
    */
   addGameObject(gameObject) {
     Matter.Composite.add(this.engine.world, gameObject.body);
@@ -58,8 +78,9 @@ class GameState {
 
   handleUserCommand(playerId, userCommand) {
     if (Object(this.players).hasOwnProperty(playerId)) {
-      const [actionRequired, action] =
-        this.players[playerId].handleUserCommand(userCommand);
+      const [actionRequired, action] = this.players[playerId].handleUserCommand(
+        userCommand
+      );
       if (actionRequired) {
         const { name, x, y, direction } = action;
         const id = cuid();
@@ -80,8 +101,18 @@ class GameState {
   toClient() {
     const { engine, players, gameObjects } = this;
 
-    let clientPlayers = Object.fromEntries(Object.entries(players).map(([playerId, player]) => [playerId, player.toClient()]));
-    let clientGameObjects = Object.fromEntries(Object.entries(gameObjects).map(([gameObjectId, gameObject]) => [gameObjectId, gameObject.toClient()]));
+    let clientPlayers = Object.fromEntries(
+      Object.entries(players).map(([playerId, player]) => [
+        playerId,
+        player.toClient(),
+      ])
+    );
+    let clientGameObjects = Object.fromEntries(
+      Object.entries(gameObjects).map(([gameObjectId, gameObject]) => [
+        gameObjectId,
+        gameObject.toClient(),
+      ])
+    );
 
     return { players: clientPlayers, gameObjects: clientGameObjects };
   }

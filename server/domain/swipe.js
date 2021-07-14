@@ -22,6 +22,10 @@ class Swipe extends GameObject {
     }
     return [];
   }
+
+  collide() {
+    return [new Remove(this.id)];
+  }
 }
 
 module.exports = { Swipe };
