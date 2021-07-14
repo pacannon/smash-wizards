@@ -67,14 +67,14 @@ io.on("connection", (client) => {
     }
 
     client.join(`room-${id}`);
-    gameStates[roomId].addPlayer(client.id);
+    gameStates[roomId]?.addPlayer(client.id);
     client.emit("joined");
   });
   client.on("userCommand", (userCommand) => {
-    gameStates[roomId].handleUserCommand(client.id, userCommand);
+    gameStates[roomId]?.handleUserCommand(client.id, userCommand);
   });
   client.on("disconnect", () => {
-    gameStates[roomId].removePlayer(client.id);
+    gameStates[roomId]?.removePlayer(client.id);
   });
 });
 
