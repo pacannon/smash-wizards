@@ -1,11 +1,14 @@
 const { GameObject } = require("./gameObject");
 const { Remove } = require("./actions/remove");
+const { ModifyHealth } = require("./actions/modifyHealth");
 class Swipe extends GameObject {
-  constructor(id, x, y, direction) {
+  constructor(id, attackerId, x, y, direction) {
     super({ id: id, x, y, width: 10, height: 10, color: "cyan" });
     this.direction = direction;
     this.createdAt = Date.now();
     this.speed = 5;
+
+    this.attackerId = attackerId;
 
     this.body.isSensor = true;
   }
@@ -23,8 +26,12 @@ class Swipe extends GameObject {
     return [];
   }
 
-  collide() {
-    return [new Remove(this.id)];
+  collide(gameObject) {
+    if (gameObject.id !== this.attackerId) {
+      return [new Remove(this.id), new ModifyHealth(gameObject.id, -1, true)];
+    }
+
+    return [];
   }
 }
 

@@ -32,8 +32,7 @@ class Player extends GameObject {
   }
 
   collide() {
-    this.health -= 1;
-    return this.health <= 1 ? [new Remove(this.id, true)] : [];
+    return [];
   }
 
   move(direction) {

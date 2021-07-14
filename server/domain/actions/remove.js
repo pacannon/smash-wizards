@@ -11,6 +11,7 @@ class Remove extends Action {
     this.isPlayer
       ? gameState.removePlayer(this.id)
       : gameState.removeGameObject(this.id);
+    return [];
   }
 }
 
