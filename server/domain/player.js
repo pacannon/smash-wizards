@@ -1,4 +1,5 @@
-const Matter = require('matter-js');
+const Matter = require("matter-js");
+const { Remove } = require("./actions/remove");
 
 const { GameObject } = require("./gameObject");
 
@@ -6,6 +7,9 @@ class Player extends GameObject {
   constructor(id) {
     super({ id: id, x: 400, y: 400, width: 100, height: 100 });
     this.id = id; // Player ID
+
+    this.health = 100;
+
     //Velocity Information
 
     this.topSpeed = 3; //Top Velocity
@@ -22,15 +26,24 @@ class Player extends GameObject {
   // Update Function ran every gameloop
   update() {
     this.x = this.body.position.x;
-    this.y = this.body.position.y
+    this.y = this.body.position.y;
     this.vx = this.body.velocity.x;
-    this.vy = this.body.velocity.y
+    this.vy = this.body.velocity.y;
+  }
+
+  collide() {
+    this.health -= 1;
+    return this.health <= 1 ? [new Remove(this.id, true)] : [];
   }
 
   move(direction) {
     this.facingDirection = direction;
     if (Math.abs(this.vx) < this.topSpeed) {
-      Matter.Body.applyForce(this.body, Matter.Vector.create(this.body.position.x, this.body.position.y), Matter.Vector.create(direction === "right" ? 0.1 : -0.1, 0))
+      Matter.Body.applyForce(
+        this.body,
+        Matter.Vector.create(this.body.position.x, this.body.position.y),
+        Matter.Vector.create(direction === "right" ? 0.1 : -0.1, 0)
+      );
     }
   }
 
@@ -95,17 +108,13 @@ class Player extends GameObject {
       return this.shoot();
     }
 
-    // DEV: turn on and off gravity
+    // DEV: do damage
     if (KeyG) {
-      this.isTouchingSurface = !this.isTouchingSurface;
+      this.health -= 10;
     }
 
     if ((KeyW || Space) && this.isTouchingSurface) {
-      this.body.force = { x: 0, y: 0.4 }
-      this.isTouchingSurface = false;
-      setTimeout(() => {
-        this.isTouchingSurface = true;
-      }, 500);
+      this.body.force = { x: 0, y: 0.4 };
     }
 
     return [false];

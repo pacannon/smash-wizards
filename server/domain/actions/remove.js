@@ -1,13 +1,16 @@
 const { Action } = require("./action");
 
 class Remove extends Action {
-  constructor(gameObjectId) {
+  constructor(id, isPlayer = false) {
     super();
-    this.gameObjectId = gameObjectId;
+    this.id = id;
+    this.isPlayer = isPlayer;
   }
 
   execute(gameState) {
-    gameState.removeGameObject(this.gameObjectId);
+    this.isPlayer
+      ? gameState.removePlayer(this.id)
+      : gameState.removeGameObject(this.id);
   }
 }
 

@@ -6,17 +6,49 @@ const Wizard = ({ player }) => {
   const width = player.width;
   const height = player.height;
   const isFacingRight = player.facingDirection === "right";
+  const health = player.health;
+  let healthColor;
+  switch (true) {
+    case health < 30:
+      healthColor = "red";
+      break;
+    case health < 70:
+      healthColor = "yellow";
+      break;
+    case health < 101:
+    default:
+      healthColor = "lime";
+      break;
+  }
 
-  const style = {
-    position: "absolute",
-    left: x - width / 2,
-    bottom: y - height / 2,
-    width: width,
-    height: height,
-    backgroundColor: "green",
-  };
   return (
-    <div id="wizard" style={style}>
+    <div
+      style={{
+        position: "absolute",
+        left: x - width / 2,
+        bottom: y - height / 2,
+        width: width,
+        height: height,
+        backgroundColor: "green",
+      }}
+    >
+      <div
+        style={{
+          height: 10,
+          width: "99%",
+          backgroundColor: "grey",
+          border: "black solid 1px",
+          marginBottom: "10px",
+        }}
+      >
+        <div
+          style={{
+            height: "100%",
+            width: `${health}%`,
+            backgroundColor: healthColor,
+          }}
+        />
+      </div>
       <div
         style={{
           position: "absolute",
