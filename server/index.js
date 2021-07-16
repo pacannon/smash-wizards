@@ -40,7 +40,7 @@ const generateRoom = () => {
     y: 240,
     width: 400,
     height: 15,
-    angle: (2*Math.PI)*(15/360)
+    angle: 2 * Math.PI * (15 / 360),
   });
   const gameObject5 = new GameObject({
     id: 5,

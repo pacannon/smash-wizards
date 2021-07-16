@@ -12,9 +12,10 @@ class Shot extends GameObject {
 
     this.attackerId = attackerId;
 
-    this.body.isSensor = true;
+    this.body.isSensor = false;
     Matter.Body.setVelocity(this.body, Matter.Vector.create(this.velocity, 3));
     Matter.Body.setStatic(this.body, false);
+    // this.body.restitution = 1;
   }
 
   update() {

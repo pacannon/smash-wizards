@@ -34,11 +34,14 @@ class GameState {
     //   });
     // });
 
-    Matter.Events.on(this.engine, "collisionActive", (e) => {
-      const actions = e.pairs.flatMap(({bodyA, bodyB}) => {
+    Matter.Events.on(this.engine, "collisionStart", (e) => {
+      const actions = e.pairs.flatMap(({ bodyA, bodyB }) => {
         const gameObjectA = this.bodiesToGameObjects[bodyA.id];
         const gameObjectB = this.bodiesToGameObjects[bodyB.id];
-        return [...gameObjectA.collide(gameObjectB), ...gameObjectB.collide(gameObjectA)]
+        return [
+          ...gameObjectA.collide(gameObjectB),
+          ...gameObjectB.collide(gameObjectA),
+        ];
       });
 
       this.resolveActions(actions);
@@ -49,7 +52,9 @@ class GameState {
     if (actions.length === 0) {
       return 0;
     } else {
-      return this.resolveActions(actions.flatMap((action, i) => action.execute(this)))
+      return this.resolveActions(
+        actions.flatMap((action, i) => action.execute(this))
+      );
     }
   }
 
@@ -82,7 +87,7 @@ class GameState {
 
   removeGameObject(id) {
     Matter.Composite.remove(this.engine.world, this.gameObjects[id].body);
-    delete this.bodiesToGameObjects[this.gameObjects[id].body.id];
+    delete this.bodiesToGameObjects[this.gameObjects[id]?.body.id];
     delete this.gameObjects[id];
   }
 
@@ -95,7 +100,7 @@ class GameState {
   }
 
   removePlayer(id) {
-    Matter.Composite.remove(this.engine.world, this.players[id].body);
+    Matter.Composite.remove(this.engine.world, this.players[id]?.body);
     delete this.bodiesToGameObjects[this.gameObjects[id]?.body.id];
     delete this.players[id];
   }

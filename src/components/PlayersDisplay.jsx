@@ -7,7 +7,7 @@ const PlayersDisplay = ({ players = [] }) => {
         position: "absolute",
         bottom: "10px",
         width: "100%",
-        zIndex: 100,
+        zIndex: 2,
       }}
     >
       <div
@@ -18,6 +18,7 @@ const PlayersDisplay = ({ players = [] }) => {
       >
         {players.map(({ id, health }, index) => (
           <div
+            key={id}
             style={{
               padding: "10px",
               backgroundColor: "grey",
